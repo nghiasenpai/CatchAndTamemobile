@@ -1,5 +1,5 @@
 -- ==========================================
--- SCRIPT [⚓] Nghia Senpai Hub (MOBILE FIXED - NÚT HUB LUÔN HIỂN THỊ)
+-- SCRIPT [⚓] Nghia Senpai Hub (MOBILE - NHẤN HUB ĐỂ MỞ MENU)
 -- ==========================================
 
 local CoreGui = game:GetService("CoreGui")
@@ -22,10 +22,10 @@ local screenWidth = screenSize.X
 local screenHeight = screenSize.Y
 
 -- Kích thước menu cho mobile
-local menuWidth = math.min(screenWidth * 0.85, 280)
-local menuHeight = math.min(screenHeight * 0.65, 450)
-local buttonHeight = 38
-local textSize = 10
+local menuWidth = math.min(screenWidth * 0.9, 300)
+local menuHeight = math.min(screenHeight * 0.7, 500)
+local buttonHeight = 40
+local textSize = 11
 
 local parentContainer = nil
 local successCore = pcall(function() return CoreGui end)
@@ -49,7 +49,7 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = parentContainer
 
 -- ==========================================
--- NÚT HUB (LUÔN HIỂN THỊ - KHÔNG BAO GIỜ MẤT)
+-- NÚT HUB (LUÔN HIỂN THỊ)
 -- ==========================================
 local ToggleButton = Instance.new("TextButton")
 ToggleButton.Name = "HubToggle"
@@ -72,14 +72,14 @@ ToggleStroke.Thickness = 3
 ToggleStroke.Parent = ToggleButton
 
 -- ==========================================
--- MAIN FRAME
+-- MAIN FRAME (BẮT ĐẦU ẨN)
 -- ==========================================
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainMenu"
 MainFrame.Size = UDim2.new(0, menuWidth, 0, menuHeight)
 MainFrame.Position = UDim2.new(0.5, -menuWidth/2, 0.5, -menuHeight/2)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
-MainFrame.Visible = false -- Bắt đầu ẩn, nhấn HUB để hiện
+MainFrame.Visible = false -- Ẩn ban đầu
 MainFrame.ZIndex = 10
 MainFrame.Active = true
 MainFrame.Draggable = true
@@ -99,7 +99,7 @@ TitleBar.Parent = MainFrame
 Instance.new("UICorner", TitleBar).CornerRadius = UDim.new(0, 12)
 
 local TitleText = Instance.new("TextLabel")
-TitleText.Size = UDim2.new(1, -80, 1, 0)
+TitleText.Size = UDim2.new(1, -70, 1, 0)
 TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
 TitleText.Text = "⚓ Nghia Senpai Hub"
@@ -134,7 +134,7 @@ Container.Parent = MainFrame
 
 local UIListLayout = Instance.new("UIListLayout")
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.Padding = UDim.new(0, 6)
 UIListLayout.Parent = Container
 
 -- ==========================================
@@ -323,7 +323,6 @@ end
 local function clearAllESP()
     for item, espData in pairs(espCache) do
         if espData.Highlight then pcall(function() espData.Highlight:Destroy() end) end
-        if espData.Billboard then pcall(function() espData.Billboard:Destroy() end) end
     end
     espCache = {}
 end
@@ -415,7 +414,7 @@ AddToggle("🖱️ Auto Click", function(state)
 end)
 
 -- ==========================================
--- 5. TỐC ĐỘ
+-- 5. TỐC ĐỘ & NHẢY
 -- ==========================================
 local walkSpeedVal = 50 * SPEED_MULTIPLIER
 local speedEnabled = false
@@ -614,7 +613,6 @@ end)
 -- ==========================================
 -- 7. CÁC CHỨC NĂNG KHÁC
 -- ==========================================
--- Noclip
 local noclip = false
 local noclipConnection = nil
 AddToggle("👻 Xuyên Tường", function(state)
@@ -685,8 +683,5 @@ CloseBtn.TouchTap:Connect(function()
     MainFrame.Visible = false 
 end)
 
--- Đảm bảo nút HUB luôn hiển thị
-ToggleButton.Visible = true
-
 print("[Nghia Senpai Hub] Script mobile đã tải!")
-print("[Nghia Senpai Hub] Nhấn nút HUB màu xanh để mở menu!")
+print("[Nghia Senpai Hub] Nhấn nút HUB màu xanh lá để mở/đóng menu!")
