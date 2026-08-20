@@ -1,5 +1,5 @@
 -- ==========================================
--- SCRIPT [⚓] Nghia Senpai Hub (MOBILE VERSION)
+-- SCRIPT [⚓] Nghia Senpai Hub (MOBILE FIXED - NÚT HUB LUÔN HIỂN THỊ)
 -- ==========================================
 
 local CoreGui = game:GetService("CoreGui")
@@ -7,7 +7,6 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
-local HttpService = game:GetService("HttpService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local TweenService = game:GetService("TweenService")
 local GuiService = game:GetService("GuiService")
@@ -17,16 +16,16 @@ local LocalPlayer = Players.LocalPlayer
 local SPEED_MULTIPLIER = 3.0
 
 -- Kiểm tra thiết bị
-local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+local isMobile = UserInputService.TouchEnabled
 local screenSize = GuiService:GetScreenResolution()
 local screenWidth = screenSize.X
 local screenHeight = screenSize.Y
 
 -- Kích thước menu cho mobile
 local menuWidth = math.min(screenWidth * 0.85, 280)
-local menuHeight = math.min(screenHeight * 0.7, 500)
-local buttonHeight = 42
-local textSize = 11
+local menuHeight = math.min(screenHeight * 0.65, 450)
+local buttonHeight = 38
+local textSize = 10
 
 local parentContainer = nil
 local successCore = pcall(function() return CoreGui end)
@@ -37,12 +36,12 @@ else
     parentContainer = LocalPlayer:WaitForChild("PlayerGui")
 end
 
-if parentContainer:FindFirstChild("NghiaSenpaiHub_Mobile") then
-    parentContainer.NghiaSenpaiHub_Mobile:Destroy()
+if parentContainer:FindFirstChild("NghiaSenpaiHub") then
+    parentContainer.NghiaSenpaiHub:Destroy()
 end
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "NghiaSenpaiHub_Mobile"
+ScreenGui.Name = "NghiaSenpaiHub"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.DisplayOrder = 2147483647
 ScreenGui.IgnoreGuiInset = true
@@ -50,36 +49,40 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = parentContainer
 
 -- ==========================================
--- NÚT BẬT/TẮT MENU (NÚT TRÒN LỚN CHO MOBILE)
+-- NÚT HUB (LUÔN HIỂN THỊ - KHÔNG BAO GIỜ MẤT)
 -- ==========================================
 local ToggleButton = Instance.new("TextButton")
-ToggleButton.Name = "ToggleBtn"
-ToggleButton.Size = UDim2.new(0, 60, 0, 60)
-ToggleButton.Position = UDim2.new(0, 10, 0.3, 0)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 180, 100)
+ToggleButton.Name = "HubToggle"
+ToggleButton.Size = UDim2.new(0, 55, 0, 55)
+ToggleButton.Position = UDim2.new(0, 5, 0.25, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
 ToggleButton.Text = "HUB"
 ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleButton.Font = Enum.Font.GothamBold
-ToggleButton.TextSize = 14
-ToggleButton.ZIndex = 999
+ToggleButton.TextSize = 13
+ToggleButton.ZIndex = 9999
+ToggleButton.Active = true
+ToggleButton.Visible = true
 ToggleButton.Parent = ScreenGui
 
 Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(1, 0)
 local ToggleStroke = Instance.new("UIStroke")
 ToggleStroke.Color = Color3.fromRGB(255, 255, 255)
-ToggleStroke.Thickness = 2
+ToggleStroke.Thickness = 3
 ToggleStroke.Parent = ToggleButton
 
 -- ==========================================
 -- MAIN FRAME
 -- ==========================================
 local MainFrame = Instance.new("Frame")
-MainFrame.Name = "MainFrame"
+MainFrame.Name = "MainMenu"
 MainFrame.Size = UDim2.new(0, menuWidth, 0, menuHeight)
 MainFrame.Position = UDim2.new(0.5, -menuWidth/2, 0.5, -menuHeight/2)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
-MainFrame.Visible = true
+MainFrame.Visible = false -- Bắt đầu ẩn, nhấn HUB để hiện
 MainFrame.ZIndex = 10
+MainFrame.Active = true
+MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
 
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
@@ -96,13 +99,13 @@ TitleBar.Parent = MainFrame
 Instance.new("UICorner", TitleBar).CornerRadius = UDim.new(0, 12)
 
 local TitleText = Instance.new("TextLabel")
-TitleText.Size = UDim2.new(1, -40, 1, 0)
+TitleText.Size = UDim2.new(1, -80, 1, 0)
 TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "⚓ Nghia Senpai Hub ⚓"
+TitleText.Text = "⚓ Nghia Senpai Hub"
 TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleText.Font = Enum.Font.GothamBold
-TitleText.TextSize = 12
+TitleText.TextSize = 11
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.Parent = TitleBar
 
@@ -119,24 +122,23 @@ Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
 
 -- Container
 local Container = Instance.new("ScrollingFrame")
-Container.Size = UDim2.new(1, -12, 1, -50)
-Container.Position = UDim2.new(0, 6, 0, 45)
+Container.Size = UDim2.new(1, -10, 1, -45)
+Container.Position = UDim2.new(0, 5, 0, 42)
 Container.BackgroundTransparency = 1
 Container.ScrollBarThickness = 2
 Container.AutomaticCanvasSize = Enum.AutomaticSize.Y
 Container.ScrollingDirection = Enum.ScrollingDirection.Y
 Container.CanvasSize = UDim2.new(0, 0, 0, 0)
 Container.TouchInputEnabled = true
-Container.ScrollBarImageColor3 = Color3.fromRGB(0, 180, 100)
 Container.Parent = MainFrame
 
 local UIListLayout = Instance.new("UIListLayout")
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-UIListLayout.Padding = UDim.new(0, 8)
+UIListLayout.Padding = UDim.new(0, 5)
 UIListLayout.Parent = Container
 
 -- ==========================================
--- CÁC HÀM TẠO UI (TỐI ƯU CHO MOBILE)
+-- CÁC HÀM TẠO UI
 -- ==========================================
 local function AddButton(name, color, callback)
     local btn = Instance.new("TextButton")
@@ -148,15 +150,10 @@ local function AddButton(name, color, callback)
     btn.TextSize = textSize
     btn.AutoButtonColor = true
     btn.Parent = Container
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
     
-    -- Hỗ trợ cả touch và click
     btn.MouseButton1Click:Connect(callback)
-    btn.Activated:Connect(function()
-        if isMobile then
-            callback()
-        end
-    end)
+    btn.TouchTap:Connect(callback)
     
     return btn
 end
@@ -171,7 +168,7 @@ local function AddToggle(name, callback)
     btn.TextSize = textSize
     btn.AutoButtonColor = true
     btn.Parent = Container
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
     
     local enabled = false
     local function updateState(newState)
@@ -183,11 +180,7 @@ local function AddToggle(name, callback)
     end
 
     btn.MouseButton1Click:Connect(function() updateState(not enabled) end)
-    btn.Activated:Connect(function()
-        if isMobile then
-            updateState(not enabled)
-        end
-    end)
+    btn.TouchTap:Connect(function() updateState(not enabled) end)
     
     return { SetState = updateState, GetState = function() return enabled end }
 end
@@ -197,7 +190,7 @@ local function AddInput(labelTitle, defaultVal, callback)
     frame.Size = UDim2.new(1, 0, 0, buttonHeight)
     frame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
     frame.Parent = Container
-    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
 
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(0.55, 0, 1, 0)
@@ -219,7 +212,7 @@ local function AddInput(labelTitle, defaultVal, callback)
     box.Font = Enum.Font.GothamBold
     box.TextSize = textSize
     box.Parent = frame
-    Instance.new("UICorner", box).CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", box).CornerRadius = UDim.new(0, 6)
 
     box.FocusLost:Connect(function()
         local val = box.Text
@@ -232,7 +225,7 @@ local function AddInput(labelTitle, defaultVal, callback)
 end
 
 -- ==========================================
--- 1. 🏄 ĐI TRÊN MẶT NƯỚC
+-- 1. ĐI TRÊN MẶT NƯỚC
 -- ==========================================
 local waterWalkEnabled = false
 local antiSinkPart = nil
@@ -241,7 +234,7 @@ local antiSinkConn = nil
 local function enableWaterWalk()
     if not antiSinkPart then
         antiSinkPart = Instance.new("Part")
-        antiSinkPart.Name = "AntiSinkPlatform"
+        antiSinkPart.Name = "AntiSink"
         antiSinkPart.Size = Vector3.new(50, 3, 50)
         antiSinkPart.Anchored = true
         antiSinkPart.CanCollide = true
@@ -293,18 +286,18 @@ AddToggle("🏄 Đi Trên Mặt Nước", function(state)
 end)
 
 -- ==========================================
--- 2. 💾 LƯU VỊ TRÍ & TELEPORT
+-- 2. LƯU VỊ TRÍ
 -- ==========================================
 local savedPosition = nil
 
-AddButton("💾 Lưu Vị Trí Hiện Tại", Color3.fromRGB(0, 150, 200), function()
+AddButton("💾 Lưu Vị Trí", Color3.fromRGB(0, 150, 200), function()
     pcall(function()
         local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
         if root then savedPosition = root.CFrame end
     end)
 end)
 
-AddButton("📍 Teleport Đến Vị Trí Lưu", Color3.fromRGB(0, 200, 100), function()
+AddButton("📍 Teleport Vị Trí Lưu", Color3.fromRGB(0, 200, 100), function()
     pcall(function()
         local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
         if root and savedPosition then root.CFrame = savedPosition end
@@ -312,7 +305,7 @@ AddButton("📍 Teleport Đến Vị Trí Lưu", Color3.fromRGB(0, 200, 100), fu
 end)
 
 -- ==========================================
--- 3. 👑 ESP ĐỊNH VỊ
+-- 3. ESP
 -- ==========================================
 local espEnabled = false
 local espCache = {}
@@ -337,7 +330,6 @@ end
 
 local function applyESP(item)
     if not item or item == LocalPlayer.Character or item:IsDescendantOf(LocalPlayer.Character) then return end
-    if Players:GetPlayerFromCharacter(item) then return end
     if not (item:IsA("Model") or item:IsA("BasePart")) then return end
 
     local rootPart = item:IsA("Model") and (item.PrimaryPart or item:FindFirstChild("HumanoidRootPart") or item:FindFirstChildOfClass("BasePart")) or item
@@ -354,23 +346,7 @@ local function applyESP(item)
     hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
     hl.Parent = item
 
-    local bgui = Instance.new("BillboardGui")
-    bgui.Size = UDim2.new(0, 200, 0, 40)
-    bgui.AlwaysOnTop = true
-    bgui.MaxDistance = 800
-    bgui.Parent = rootPart
-
-    local textLbl = Instance.new("TextLabel")
-    textLbl.Size = UDim2.new(1, 0, 1, 0)
-    textLbl.BackgroundTransparency = 1
-    textLbl.Font = Enum.Font.GothamBold
-    textLbl.TextSize = 12
-    textLbl.TextColor3 = rareColor
-    textLbl.TextStrokeTransparency = 0
-    textLbl.Text = "[" .. rareType .. "]"
-    textLbl.Parent = bgui
-
-    espCache[item] = { Highlight = hl, Billboard = bgui }
+    espCache[item] = { Highlight = hl }
 end
 
 local function startESP()
@@ -396,13 +372,13 @@ local function stopESP()
     clearAllESP()
 end
 
-AddToggle("👑 ESP Định Vị Boss/Mythical/Divine", function(state)
+AddToggle("👑 ESP Boss/Mythical/Divine", function(state)
     espEnabled = state
     if state then startESP() else stopESP() end
 end)
 
 -- ==========================================
--- 4. 🖱️ AUTO CLICK (TOUCH)
+-- 4. AUTO CLICK (TOUCH)
 -- ==========================================
 local autoClicker = false
 local autoClickInterval = 0.5
@@ -439,7 +415,7 @@ AddToggle("🖱️ Auto Click", function(state)
 end)
 
 -- ==========================================
--- 5. 🏃 TỐC ĐỘ & NHẢY CAO
+-- 5. TỐC ĐỘ
 -- ==========================================
 local walkSpeedVal = 50 * SPEED_MULTIPLIER
 local speedEnabled = false
@@ -477,12 +453,7 @@ AddInput("⚙️ Tốc Độ:", walkSpeedVal, function(v)
     if speedEnabled then applyWalkSpeed() end
 end)
 
-LocalPlayer.CharacterAdded:Connect(function(newChar)
-    newChar:WaitForChild("Humanoid")
-    task.wait(0.5)
-    if speedEnabled then applyWalkSpeed() end
-end)
-
+-- Nhảy cao
 local jumpPowerVal = 120 * SPEED_MULTIPLIER
 local jumpEnabled = false
 
@@ -502,7 +473,7 @@ UserInputService.JumpRequest:Connect(function()
 end)
 
 -- ==========================================
--- 6. 🏝️ BAY ĐẾN ĐẢO
+-- 6. BAY ĐẾN ĐẢO
 -- ==========================================
 local islandFlySpeed = 250 * SPEED_MULTIPLIER
 local isFlyingToIsland = false
@@ -622,7 +593,7 @@ islandTitle.BackgroundTransparency = 1
 islandTitle.Text = "🏝️ BAY ĐẾN ĐẢO:"
 islandTitle.TextColor3 = Color3.fromRGB(0, 220, 130)
 islandTitle.Font = Enum.Font.GothamBold
-islandTitle.TextSize = 12
+islandTitle.TextSize = 11
 islandTitle.TextXAlignment = Enum.TextXAlignment.Left
 islandTitle.Parent = Container
 
@@ -641,64 +612,7 @@ AddButton("🛑 Dừng Bay", Color3.fromRGB(200, 50, 50), function()
 end)
 
 -- ==========================================
--- 7. 🕊️ BAY SIÊU MƯỢT
--- ==========================================
-local flySpeed = 150 * SPEED_MULTIPLIER
-local isFlying = false
-local flyConn
-local flyBodyVelocity2 = nil
-local flyBodyGyro2 = nil
-
-AddToggle("🕊️ Chức Năng Bay", function(state)
-    isFlying = state
-    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-    local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-    if not root or not hum then return end
-
-    if state then
-        hum.PlatformStand = true
-        flyBodyVelocity2 = Instance.new("BodyVelocity")
-        flyBodyVelocity2.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-        flyBodyVelocity2.Velocity = Vector3.new(0, 0, 0)
-        flyBodyVelocity2.Parent = root
-        
-        flyBodyGyro2 = Instance.new("BodyGyro")
-        flyBodyGyro2.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-        flyBodyGyro2.D = 1000
-        flyBodyGyro2.P = 50000
-        flyBodyGyro2.CFrame = root.CFrame
-        flyBodyGyro2.Parent = root
-
-        flyConn = RunService.RenderStepped:Connect(function()
-            if not isFlying then return end
-            local cam = workspace.CurrentCamera
-            local moveDir = Vector3.new()
-            
-            -- Mobile controls sử dụng joystick mặc định
-            local moveVector = hum.MoveDirection
-            if moveVector.Magnitude > 0 then
-                moveDir = moveVector
-            end
-            
-            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0, 1, 0) end
-            
-            flyBodyGyro2.CFrame = cam.CFrame
-            if moveDir.Magnitude > 0 then
-                flyBodyVelocity2.Velocity = moveDir.Unit * flySpeed
-            else
-                flyBodyVelocity2.Velocity = Vector3.new(0, 0, 0)
-            end
-        end)
-    else
-        if flyConn then flyConn:Disconnect() end
-        if flyBodyVelocity2 then flyBodyVelocity2:Destroy() end
-        if flyBodyGyro2 then flyBodyGyro2:Destroy() end
-        hum.PlatformStand = false
-    end
-end)
-
--- ==========================================
--- 8. CÁC CHỨC NĂNG KHÁC
+-- 7. CÁC CHỨC NĂNG KHÁC
 -- ==========================================
 -- Noclip
 local noclip = false
@@ -753,27 +667,26 @@ AddButton("⚠️ Tự Kick", Color3.fromRGB(180, 40, 40), function()
 end)
 
 -- ==========================================
--- KẾT NỐI SỰ KIỆN
+-- KẾT NỐI NÚT HUB
 -- ==========================================
 ToggleButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
 
-ToggleButton.Activated:Connect(function()
-    if isMobile then
-        MainFrame.Visible = not MainFrame.Visible
-    end
+ToggleButton.TouchTap:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
 end)
 
 CloseBtn.MouseButton1Click:Connect(function() 
     MainFrame.Visible = false 
 end)
 
-CloseBtn.Activated:Connect(function()
-    if isMobile then
-        MainFrame.Visible = false
-    end
+CloseBtn.TouchTap:Connect(function() 
+    MainFrame.Visible = false 
 end)
 
-print("[Nghia Senpai Hub] Script mobile đã tải thành công!")
-print("[Nghia Senpai Hub] Nhấn nút HUB để bật/tắt menu")
+-- Đảm bảo nút HUB luôn hiển thị
+ToggleButton.Visible = true
+
+print("[Nghia Senpai Hub] Script mobile đã tải!")
+print("[Nghia Senpai Hub] Nhấn nút HUB màu xanh để mở menu!")
